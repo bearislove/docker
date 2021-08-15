@@ -103,5 +103,56 @@ apt install  curl
 
 Bài 2 Tạo container từ image của nginx
 https://hub.docker.com/_/nginx
+https://linuxways.net/ubuntu/how-to-install-docker-in-ubuntu-20-04-and-run-nginx-container/
+
+## Dockerfile
+Dockerfile là một file được dùng để build một image bằng cách đọc các chỉ dẫn từ file đó. Tên file mặc định được dùng là Dockerfile. Bạn có thể tạo dockerfile trong thư mục hiện tại với các chỉ dẫn cụ thể và build một image tùy chỉnh theo yêu cầu của bạn.
+
+**Cách build image với Dockerfile**
+
+Dockerfile là một file được đặt ở vị trí gốc trong container khi build xong. Bạn có thể dùng lệnh sau đây để build docker image. Trong câu lệnh bên dưới, docker sẽ đọc Dockerfile tại vị trí thư mục hiện tại.
+
+**docker build -t image_name .**
+
+Bạn cũng có thể dùng cờ **-f** với lệnh docker build để trỏ đến Dockerfile tại bất kỳ nơi nào trong hệ thống file của bạn.
+
+**docker build  -t image_name -f /path/to/Dockerfile .**
+
+
+## Có gì bên trong Dockerfile
+
+Trong Dockerfile, có một số điểm mà các bạn cần phải biết với những chỉ thị như sau
+
+**FROM**
+
+**FROM** được dùng để thiết lập image cơ sở cho chỉ dẫn tiếp theo. Dockerfile phải có chỉ thị FROM với tên image hợp lệ là chỉ thị đầu tiên.
+
+``FROM ubuntu``
+``FROM php:7.4-fpm``
+
+**LABEL**
+Sử dụng label, bạn có thể tổ chức các image đúng cách. Nó cực kỳ hữu ích để thiết lập địa chỉ nhà phát triển, tên nhà cung cấp, phiên bản image, ngày phát hành,…
+
+```
+LABEL maintainer="anhtt1@kaopiz.com"
+LABEL vendor="anhtt"
+LABEL com.example.version="1.1.1"
+```
+**RUN**
+
+Dùng chỉ thị RUN, bạn có thể chạy bất kỳ lệnh nào tới image trong thời gian build. Ví dụ, bạn có thể cài đặt các package bắt buộc trong thời gian build.
+
+```
+RUN apt-get update 
+RUN apt-get install -y apache2 automake build-essential curl
+```
+Hoặc sử dụng chạy một chỉ thị RUN như sau:
+
+```
+RUN apt-get update && apt-get install -y \
+    automake \
+    build-essential \
+    curl \
+```
 
 
