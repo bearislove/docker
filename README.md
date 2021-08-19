@@ -92,6 +92,7 @@ Dùng lệnh **docker rm để xóa docker container** đang tồn tại. Bạn 
 - Cài thêm một package curl.
 - start, stop, exec.
 
+```
 docker images
 sudo docker run -d --name myweb ubuntu:latest
 docker exec -it myweb bash
@@ -100,6 +101,7 @@ docker start myweb
 docker exec -it myweb bash
 -------------------
 apt install  curl
+```
 
 Bài 2 Tạo container từ image của nginx
 https://hub.docker.com/_/nginx
