@@ -155,4 +155,178 @@ RUN apt-get update && apt-get install -y \
     curl \
 ```
 
+**COPY**
+
+Chỉ thị COPY được dùng để copy file và thư mục từ hệ thống host tới image trong khi build. Ví dụ, lệnh đầu tiên sẽ copy tất cả file từ thư mục host html/ tới thư mục /var/www/html trên image. Lệnh thứ hai sẽ copy tất cả file với phần mở rộng .conf tới địa chỉ thư mục 
+**/etc/apache2/sites-available/** .
+
+
+```
+COPY html/* /var/www/html/
+COPY *.conf /etc/apache2/sites-available/
+```
+
+**WORKDIR**
+
+Chỉ thị WORKDIR được dùng để thiết lập thư mục làm việc hiện tại cho bất kỳ chỉ thị RUN, CMD, ENTRYPOINT, COPY… trong quá trình build.
+
+```
+WORKDIR /opt
+```
+
+
+**CMD**
+
+Chỉ thị CMD được dùng để chạy các dịch vụ hoặc phần mềm có chứa bên trong image, cùng với bất kỳ tham số khác trong khi khởi chạy container. CMD dùng cú pháp đơn giản sau đây:
+
+```
+CMD ["executable","param1","param2"]
+CMD ["executable","param1","param2"]
+```
+Ví dụ, để khởi động dịch vụ Apache khi khởi chạy container, dùng lệnh sau đây:
+
+```
+CMD ["apachectl", "-D", "FOREGROUND"]
+```
+
+**EXPOSE**
+
+Chỉ thị EXPOSE chỉ ra các port mà container sẽ lắng nghe cho các kết nối. Sau đó bạn có thể liên kết các port hệ thống với container và dùng chúng.
+
+```
+EXPOSE 80
+EXPOSE 443
+```
+**ENV**
+Chỉ thị ENV được dùng để thiết lập biến môi trường cho các dịch vụ cụ thể của container.
+
+```
+ENV PATH=$PATH:/usr/local/pgsql/bin/ \
+    PG_MAJOR=9.6.0
+```
+**VOLUME**
+
+Chỉ thị VOLUME tạo một mount point với tên được chỉ định và đánh dấu nó là nơi giữ mount volume từ host bên ngoài hoặc container khác.
+```
+VOLUME ["/data"]
+```
+## Docker – quản lý ports
+
+Docker containers chạy các dịch vụ bên trong nó trên các port được chỉ định cụ thể. Để truy cập dịch vụ của một container đang chạy trên một port, bạn cần liên kết container port với port trên Docker host (máy thật).
+
+Ví dụ 1:
+
+Nhìn vào hình bên dưới, bạn sẽ thấy docker host đang chạy hai containers, một cái chạy Apache và cái còn lại chạy MySQL.
+
+![image](https://user-images.githubusercontent.com/31482352/130097684-b563e2ce-7901-42a5-a4b1-a66d248193a8.png)
+
+Bây giờ, bạn cần truy cập vào website đang chạy Apache container trên port 80. Chúng ta sẽ liên kết docker port 8080 tới container port 80. Bạn cũng có thể dùng port 80 trên docker port.
+
+Container thứ hai chạy MySQL trên port 3306. Có nhiều cách khác để truy cập MySQL từ docker host. Nhưng trong bài viết này, mình sẽ liên kết docker port 6603 tới container port 3306. Bây giờ, mình sẽ truy cập trực tiếp MySQL từ Docker container bằng cách kết nối docker host trên port 6603.
+
+Câu lệnh bên dưới sẽ liên kết host docker port với container port.
+```
+$ docker run -it -p 8080:80 apache_image
+$ docker run -it -p 6603:3066 mysql_image
+```
+Ví dụ 2:
+
+Trong ví dụ thứ hai dùng project có sẵn của mình trên github. Nó sẽ show cho bạn ví dụ đang chạy trên port 8080 trên docker host. Đơn giản bạn chỉ cần clone repository bằng cách chạy câu lệnh sau:
+
+```
+$ git clone https://github.com/tecrahul/dockerfile
+$ cd dockerfile
+```
+Bây giờ, build docker image với tên apacheimage
+
+```docker build -t apacheimage .```
+
+Chạy container bằng cách sử dụng lệnh docker run. Dịch vụ apache sẽ khởi động trên container port 80. Bạn cần chỉ ra port cụ thể bằng cách dùng option -p 8080:80 để liên kết host system port 8080 với container port 80.
+
+**docker run -it -p 8080:80 apacheimage**
+
+Bây giờ truy cập địa chỉ IP docker host với port 8080 trên trình duyệt web. Bạn sẽ xem được trang web đang chạy trên Apache của container
+
+**Thêm một ví dụ nữa:**
+
+Bạn có thể liên kết nhiều ports với một container, nhưng cần đảm bảo bạn đã sử dụng chỉ dẫn EXPOSE tất cả các ports trong Dockerfile trước khi build image.
+
+```
+docker run -it -p 8080:80,8081:443 image_name
+```
+
+Nếu bạn cần liên kết port với interface của docker host cụ thể, khai báo địa chỉ IP như bên dưới. Trong ví dụ bên dưới, port 8080, 8081 sẽ có thể truy cập với địa chỉ 127.0.0.1
+
+```
+$ docker run -it -p 127.0.0.1:8080:80,127.0.0.1:8081:443 image_name
+$ docker run -it -p 192.168.1.111:8080:80,92.168.1.111:8081:443 image_name
+```
+
+## Networking
+Docker cung cấp một tùy chọn để tạo và quản lý network riêng giữa các container. Dùng lệnh docker network để quản lý Docker networking.
+
+**Cú pháp**
+```
+docker network [options]
+```
+Dùng cách lệnh theo hướng dẫn bên dưới để tạo, liệt kê và quản lý Docker networking.
+
+**Liệt kê Docker networks**
+
+Dùng tùy chọn ls với lệnh docker network để liệt kê các network khả dụng trên system host.
+
+```
+docker network ls
+```
+
+**Tạo docker network**
+
+Docker cung cấp nhiều loại network. Lệnh bên dưới sẽ tạo bridge network trên hệ thống của bạn.
+
+Cú pháp
+
+```
+docker network create -d [network_type] [network_name]
+```
+Ví dụ
+
+docker network create -d bridge my-bridge-network
+Kết nối container với network
+
+Bạn có thể kết nối bất kỳ container nào tới một docker network đang tồn tại bằng cách sử dụng tên container hoặc ID. Một khi container được kết nối tới network, nó có thể giao tiếp với các container khác trong cùng mạng.
+
+Cú pháp
+
+docker network connect [network_name] [container_name]
+Ví dụ
+
+docker network connect my-bridge-network centos
+Ngắt kết nối docker khỏi network
+
+Bạn có thể ngắt kết nối một container khỏi một network cụ thể bất cứ khi nào bằng cách dùng lệnh dưới đây
+
+Cú pháp
+
+docker network disconnect [network_name] [container_name]
+Ví dụ
+
+docker network disconnect my-bridge-network centos
+Kiểm tra Docker network
+
+Dùng tùy chọn inspect để kiểm tra với lệnh docker network để xem chi tiết docker network
+
+docker network inspect my-bridge-network
+Bạn sẽ nhận được kết quả như sau
+
+Xóa Docker network
+
+Dùng tùy chọn rm để xóa bất kỳ Docker network nào đang không sử dụng. Bạn có thể chỉ định một hoặc nhiều network hơn bằng cách sử dụng dấu cách (space) để xóa.
+
+Ví dụ
+
+docker network rm my-bridge-network network2 network3
+Bạn cũng có thể xóa tất cả network không sử dụng khỏi system host bằng cách sử dụng tùy chọn prune.
+
+docker network prune
+
 
