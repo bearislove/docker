@@ -570,4 +570,19 @@ File docker compose ở trên được thiết lập cho hai container. Containe
 Bây giờ, build một image sử dụng câu lệnh sau đây. Nó sẽ tạo một image tên là apache sử dụng Dockerfile và nội dung từ thư mục webapp.
 
 
+**Bước 5: Khởi động docker compose**
 
+Cuối cùng, khởi động container sử dụng lệnh docker-compose up Dùng -d để chạy chúng trong chế độ ngầm.
+```
+$ docker-compose up -d
+
+
+Bạn có thể truy cập ứng dụng web. Ví dụ, http://localhost trong đó dockerhost là địa chỉ ip hoặc hostname của máy đang chạy docker.```
+
+**Bước 6: Cập nhật nội dung docker**
+Sử dụng lệnh sau để rebuild container webapp và khởi chạy bằng cách sử dụng docker-compose
+
+```
+$ docker-compose build
+$ docker-compose up -d
+```
