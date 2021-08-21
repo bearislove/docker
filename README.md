@@ -292,43 +292,165 @@ docker network create -d [network_type] [network_name]
 ```
 Ví dụ
 
+```
 docker network create -d bridge my-bridge-network
-Kết nối container với network
+```
+**Kết nối container với network**
 
 Bạn có thể kết nối bất kỳ container nào tới một docker network đang tồn tại bằng cách sử dụng tên container hoặc ID. Một khi container được kết nối tới network, nó có thể giao tiếp với các container khác trong cùng mạng.
 
 Cú pháp
-
+```
 docker network connect [network_name] [container_name]
+```
 Ví dụ
-
+```
 docker network connect my-bridge-network centos
-Ngắt kết nối docker khỏi network
+```
+**Ngắt kết nối docker khỏi network**
 
 Bạn có thể ngắt kết nối một container khỏi một network cụ thể bất cứ khi nào bằng cách dùng lệnh dưới đây
 
 Cú pháp
-
+```
 docker network disconnect [network_name] [container_name]
+```
 Ví dụ
-
+```
 docker network disconnect my-bridge-network centos
-Kiểm tra Docker network
+```
+**Kiểm tra Docker network**
 
 Dùng tùy chọn inspect để kiểm tra với lệnh docker network để xem chi tiết docker network
-
+```
 docker network inspect my-bridge-network
-Bạn sẽ nhận được kết quả như sau
+```
 
-Xóa Docker network
+
+**Xóa Docker network**
 
 Dùng tùy chọn rm để xóa bất kỳ Docker network nào đang không sử dụng. Bạn có thể chỉ định một hoặc nhiều network hơn bằng cách sử dụng dấu cách (space) để xóa.
 
 Ví dụ
-
+```
 docker network rm my-bridge-network network2 network3
+```
 Bạn cũng có thể xóa tất cả network không sử dụng khỏi system host bằng cách sử dụng tùy chọn prune.
-
+```
 docker network prune
+```
+## Docker compose
+
+Docker compose là một công cụ khác cho docker để thiết lập môi trường multi-container. Sử dụng để tạo một file compose định nghĩa tất cả container với môi trường đó. Bạn có thể dùng một lệnh dễ dàng để build image và chạy tất cả container.
+
+Quá trình gồm ba bước để làm việc với Docker compose
+
+1 Định nghĩa môi trường ứng dụng với Dockerfile cho tất cả các dịch vụ
+2 Tạo file docker-compose-yml định nghĩa tất cả các dịch vụ bên dưới ứng dụng
+3 Chạy lệnh docker-compose up để chạy tất cả các dịch vụ bên dưới ứng dụng.
+
+Cài đặt Docker compose
+
+Truy cập trang web chính thức của Docker compose trên github và download phiên bản mới nhất của công cụ Docker compose. 
+Bạn cũng có thể cài đặt Docker compose bằng cách dùng lệnh bên dưới. 
+Trước khi cài đặt phiên bản cụ thể, bạn phải kiểm tra khả năng tương thích trên trang phát hành với phiên bản docker của bạn.
+
+```
+$ curl -L https://github.com/docker/compose/releases/download/1.16.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+$ chmod +x /usr/local/bin/docker-compose
+```
+
+Ví dụ file Docker compose
+
+File docker-compose.yml được yêu cầu khi bạn muốn sử dụng docker compose. Bên dưới là file cấu hình ví dụ của docker-compose version 3. File này chỉ có một dịch vụ được thêm vào và đặt tên là web.
+```
+version: '3'
+services:
+  db:
+     image: mysql
+     container_name: mysql_db
+     restart: always
+     environment:
+        - MYSQL_ROOT_PASSWORD="secret"
+  web:
+    image: apache
+    build: .
+    container_name: apache_web
+    restart: always
+    ports:
+      - "8080:80"
+```
+
+**Tham khảo một số lệnh Docker compose**
+Lệnh docker-compose cung cấp một số các tùy chọn để quản lý docker container với docker-compose.
+
+**build –**
+Tùy chọn build được dùng để build images cho các dịch vụ được định nghĩa
+```
+$ docker-compose build             ## Build all services
+$ docker-compose build web         ## Build single service
+```
+
+**up –**
+
+Dùng để tạo docker container với các dịch vụ có sẵn trong file docker-compose.yml trong thư mục hiện tại. Dùng -d để khởi động container trong chế độ chạy ngầm.
+```
+$ docker-compose up -d            ## Create all containers
+$ docker-compose up -d web        ## Create single container
+```
+**down –**
+
+Sẽ dừng và xóa tất cả container, network và các images được liên kết cho các dịch vụ được định nghĩa trong file config.
+```
+$ docker-compose down           ## Restart all containers
+$ docker-compose down web       ## Restart single container
+```
+**ps –**
+
+Sẽ liệt kê tất cả container được tạo cho các dịch vụ được định nghĩa trong file config với status, ports và command.
+
+``$ docker-compose ps ```
+
+exec –
+
+Sẽ thực thi một lệnh tới container đang chạy. Ví dụ, liệt kê danh sách các file trong container được liên kết với dịch vụ web.
+```
+$ docker-compose exec web ls -l
+```
+
+**start –**
+
+Sẽ start các container của các dịch vụ được định nghĩa trong file config.
+```
+$ docker-compose start            ## Start all containers
+$ docker-compose start web        ## Start single container
+```
+
+**stop –**
+
+Sẽ dừng các container đang chạy cho các dịch vụ được định nghĩa trong file config
+
+**restart –**
+
+Sẽ khởi động lại các container của các dịch vụ trong file config.
+
+**pause –**
+
+Sẽ tạm dừng các container dịch vụ được định nghĩa trong config
+
+**unpause –**
+
+Sẽ bắt đầu các container bị tạm dừng
+
+**rm –**
+
+Sẽ xóa các container bị dừng đối với các dịch vụ được khai báo trong file config
 
 
+## Ví dụ về docker-compose
+
+Trong ví dụ này, mình sẽ tạo hai docker container sử dụng Docker compose. Một docker container chạy MySQL và container còn lại chạy Apache web server.
+
+Các bạn hãy làm theo hướng dẫn của mình và xem những gì xảy ra ở đây
+
+**Bước 1: Tạo cấu trúc thư mục**
