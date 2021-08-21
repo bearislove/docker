@@ -454,3 +454,120 @@ Trong ví dụ này, mình sẽ tạo hai docker container sử dụng Docker co
 Các bạn hãy làm theo hướng dẫn của mình và xem những gì xảy ra ở đây
 
 **Bước 1: Tạo cấu trúc thư mục**
+```
+$ mkdir dockercompose && cd dockercompose
+$ mkdir webapp
+$ echo "<h2>It Works</h2>" > webapp/index.html
+```
+
+Bước 2: Tạo Dockerfile cho webapp
+
+Bây giờ tạo Dockerfile trong thư mục webapp để tạo image tùy chỉnh cho ứng dụng bao gồm cả nginx webserver.
+
+```
+$ vim  webapp/Dockerfile
+```
+Và nội dung sau
+
+```
+FROM php:7.4-fpm
+
+WORKDIR /var/www
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpng-dev \
+    libjpeg62-turbo-dev \
+    libfreetype6-dev \
+    locales \
+    libzip-dev \
+    zip \
+    jpegoptim optipng pngquant gifsicle \
+    vim \
+    unzip \
+    git \
+    curl \
+    autoconf \
+    pkg-config
+#    libssl-dev
+RUN pecl install xdebug-2.9.2 && docker-php-ext-enable xdebug
+# Install extensions
+RUN docker-php-ext-install pdo_mysql zip exif pcntl
+RUN docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/
+#--with-png-dir=/usr/include/
+RUN docker-php-ext-install gd
+
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Add user for laravel application
+RUN groupadd -g 1000 www
+RUN useradd -u 1000 -ms /bin/bash -g www www
+
+# Permission
+RUN chown www:www /var/www
+# Change current user to www
+USER www
+# Expose port 9000 and start php-fpm server
+EXPOSE 9000
+CMD ["php-fpm"]
+
+```
+
+**Bước 3: Tạo file Docker compose**
+
+Cuối cùng, tạo file cấu hình docker compose (docker-compose.yml) trong thư mục hiện tại. Nó sẽ định nghĩa tất cả container sẽ được dùng trong phần thiết lập hiện tại.
+
+```
+vim  docker-compose.yml
+```
+
+Và thêm nội dung sau
+```
+version: '3'
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "9000:9000"
+    volumes:
+      - .:/var/www
+    environment:
+      PHP_EXTENSION_XDEBUG: 1
+      XDEBUG_CONFIG: remote_host=192.168.1.46 # ip máy local
+    networks:
+      - app_network
+
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - .:/usr/share/nginx/html
+    networks:
+      - app_network
+networks:
+  app_network:
+    driver: bridge
+```
+File docker compose ở trên được thiết lập cho hai container. Container đầu tiên là mysql database server và container thứ hai là web server. Container web sẽ chạy ứng dụng của mình trên Apache server. Vì nó được tùy chỉnh nên mình xác định thư mục build cho webapp.
+
+**Bước 4: Build webapp image**
+Bây giờ, build một image sử dụng câu lệnh sau đây. Nó sẽ tạo một image tên là apache sử dụng Dockerfile và nội dung từ thư mục webapp.
+
+
+
