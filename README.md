@@ -103,10 +103,18 @@ docker exec -it myweb bash
 apt install  curl
 ```
 
-Bài 2 Tạo container từ image của nginx
+Bài 2 Sử dụng image từ hub docker
 https://hub.docker.com/_/nginx
 https://linuxways.net/ubuntu/how-to-install-docker-in-ubuntu-20-04-and-run-nginx-container/
 
+```
+sudo docker run -d --name test_nginx -p 8080:80 nginx:latest
+docker exec -it test_nginx bash
+cat /etc/nginx/conf.d/default.conf
+apt-get update
+apt-get -y install nano
+docker cp work.html test_nginx:/usr/share/nginx/html/
+```
 ## Dockerfile
 Dockerfile là một file được dùng để build một image bằng cách đọc các chỉ dẫn từ file đó. Tên file mặc định được dùng là Dockerfile. Bạn có thể tạo dockerfile trong thư mục hiện tại với các chỉ dẫn cụ thể và build một image tùy chỉnh theo yêu cầu của bạn.
 
