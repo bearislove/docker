@@ -37,7 +37,7 @@ Bạn dùng lệnh **docker pull** để download bất kỳ image từ docker h
 Ta dùng lệnh docker rmi để xóa bất kỳ docker image từ hệ thống local. Ví dụ, để xóa image tên centos dùng lệnh sau:
 
 ``docker rmi centos``
- 
+
  
 ## Docker Container
 
@@ -86,6 +86,14 @@ Dùng lệnh **docker rm để xóa docker container** đang tồn tại. Bạn 
 
 ``docker stop cc5d74cf8250``
 ``docker rm cc5d74cf8250``
+
+**Log docker**
+
+Ta hay dùng lệnh log khi bị lỗi của services với lệnh sau
+
+``docker logs --tail 100 d37544acc57f``
+
+[Tham khảo các lệnh khác](https://docs.docker.com/engine/reference/commandline/docker/)
 
 ## Thực hành tạo một container
 
