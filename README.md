@@ -126,6 +126,9 @@ docker cp work.html test_nginx:/usr/share/nginx/html/
 ## Dockerfile
 Dockerfile là một file được dùng để build một image bằng cách đọc các chỉ dẫn từ file đó. Tên file mặc định được dùng là Dockerfile. Bạn có thể tạo dockerfile trong thư mục hiện tại với các chỉ dẫn cụ thể và build một image tùy chỉnh theo yêu cầu của bạn.
 
+![image](https://user-images.githubusercontent.com/31482352/131525238-82e25a13-abad-4567-b894-b85bb6ebe94e.png)
+
+
 **Cách build image với Dockerfile**
 
 Dockerfile là một file được đặt ở vị trí gốc trong container khi build xong. Bạn có thể dùng lệnh sau đây để build docker image. Trong câu lệnh bên dưới, docker sẽ đọc Dockerfile tại vị trí thư mục hiện tại.
