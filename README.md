@@ -87,6 +87,14 @@ Dùng lệnh **docker rm để xóa docker container** đang tồn tại. Bạn 
 ``docker stop cc5d74cf8250``
 ``docker rm cc5d74cf8250``
 
+**Truy cập vào 1 container đang chạy**
+
+``docker exec [OPTIONS] CONTAINER COMMAND [ARG...]``
+
+Ví dụ ```docker exec -it ubuntu_bash bash```
+
+Thêm **-it** để vừa thực thi lệnh, vừa tương tác luôn với trình bash.
+
 **Log docker**
 
 Ta hay dùng lệnh log khi bị lỗi của services với lệnh sau
