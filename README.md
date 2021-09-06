@@ -602,14 +602,14 @@ Bây giờ, build một image sử dụng câu lệnh sau đây. Nó sẽ tạo 
 Cuối cùng, khởi động container sử dụng lệnh docker-compose up Dùng -d để chạy chúng trong chế độ ngầm.
 ```
 $ docker-compose up -d
-
+```
 
 Bạn có thể truy cập ứng dụng web. Ví dụ, http://localhost trong đó dockerhost là địa chỉ ip hoặc hostname của máy đang chạy docker.```
 
 **Bước 6: Cập nhật nội dung docker**
 Sử dụng lệnh sau để rebuild container webapp và khởi chạy bằng cách sử dụng docker-compose
 
-```
+``
 $ docker-compose build
 $ docker-compose up -d
-```
+``
