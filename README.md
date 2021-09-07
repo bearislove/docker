@@ -165,6 +165,19 @@ Trong Dockerfile, có một số điểm mà các bạn cần phải biết vớ
 ``FROM ubuntu``
 ``FROM php:7.4-fpm``
 
+**ARG** Định nghĩa giá trị biến trong lúc build image.
+ví dụ.
+
+```
+ARG  CODE_VERSION=latest
+FROM base:${CODE_VERSION}
+CMD  /code/run-app
+
+FROM extras:${CODE_VERSION}
+CMD  /code/run-extras
+
+```
+
 **LABEL**
 Sử dụng label, bạn có thể tổ chức các image đúng cách. Nó cực kỳ hữu ích để thiết lập địa chỉ nhà phát triển, tên nhà cung cấp, phiên bản image, ngày phát hành,…
 
@@ -242,9 +255,12 @@ ENV PATH=$PATH:/usr/local/pgsql/bin/ \
 **VOLUME**
 
 Chỉ thị VOLUME tạo một mount point với tên được chỉ định và đánh dấu nó là nơi giữ mount volume từ host bên ngoài hoặc container khác.
+
 ```
 VOLUME ["/data"]
 ```
+[Đọc thêm các chỉ thị khác](https://docs.docker.com/engine/reference/builder/#understand-how-arg-and-from-interact)
+
 ## Docker – quản lý ports
 
 Docker containers chạy các dịch vụ bên trong nó trên các port được chỉ định cụ thể. Để truy cập dịch vụ của một container đang chạy trên một port, bạn cần liên kết container port với port trên Docker host (máy thật).
