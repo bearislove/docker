@@ -5,8 +5,11 @@ Docker là nền tảng giúp chạy phần mềm trong container, là một n�
 
 ## Lợi ích chính của Docker 
 
-Là cho phép người dùng đóng gói một ứng dụng với tất cả các phụ thuộc của nó vào một đơn vị được tiêu chuẩn hóa để phát triển phần mềm.
-Không giống như các máy ảo, các container sử dụng ít tài nguyên hơn và do đó cho phép sử dụng hiệu quả hơn các tài nguyên hệ thống.
+- Không như máy ảo Docker start và stop chỉ trong vài giây.
+- Bạn có thể khởi chạy container trên mỗi hệ thống mà bạn muốn.
+- Container có thể build và loại bỏ nhanh hơn máy ảo.
+- Dễ dàng thiết lập môi trường làm việc. Chỉ cần config 1 lần duy nhất và không bao giờ phải cài đặt lại các dependencies. Nếu bạn thay đổi máy hoặc có người mới tham gia vào project thì bạn chỉ cần lấy config đó và đưa cho họ.
+- Nó giữ cho work-space của bạn sạch sẽ hơn khi bạn xóa môi trường mà ảnh hưởng đến các phần khác.
  
 ## Docker image
  
@@ -26,7 +29,7 @@ Dùng lệnh docker search để tìm kiếm các images trên docker hub. Ví d
 
 ``docker search centos``
 
-**Download **docker imag**e**
+**Download docker image**
 
 Bạn dùng lệnh **docker pull** để download bất kỳ image từ docker hub. Ví dụ để download image centOS phiên bản mới nhất từ docker hub về máy local và tạo container.
 
@@ -62,9 +65,10 @@ Sử dụng lệnh docker để khởi chạy docker container trên hệ thốn
 ``docker run hello-world``
 
 Bây giờ tạo một instance docker chạy hệ điều hành CentOS. Tùy chọn -it sẽ cung cấp một phiên tương tác với pseudo-TTY. Nó cung cấp cho bạn shell của container ngay lập tức.
-``
+
+```
 docker run -it centos
-``
+```
 **Liệt kê danh sách docker container**
 
 Dùng lệnh **docker ps** để liệt kê các container đang chạy trên hệ thống hiện tại. Nó sẽ không liệt kê các container bị dừng. Nó sẽ hiển thị Container ID, name và các thông tin hữu ích khác về container.
@@ -80,11 +84,13 @@ Dùng tùy chọn -a với lệnh ở trên để liệt kê tất cả các con
 ``docker inspect cc5d74cf8250``
 
 Trong đó: **cc5d74cf8250** là **id container**
+
 **Xóa Docker container**
 
 Dùng lệnh **docker rm để xóa docker container** đang tồn tại. Bạn cần cung cấp **docker container id** hoặc **container name** để xóa một container cụ thể.
 
 ``docker stop cc5d74cf8250``
+
 ``docker rm cc5d74cf8250``
 
 **Truy cập vào 1 container đang chạy**
@@ -372,9 +378,12 @@ Docker compose là một công cụ khác cho docker để thiết lập môi tr
 
 Quá trình gồm ba bước để làm việc với Docker compose
 
-1 Định nghĩa môi trường ứng dụng với Dockerfile cho tất cả các dịch vụ
-2 Tạo file docker-compose-yml định nghĩa tất cả các dịch vụ bên dưới ứng dụng
-3 Chạy lệnh docker-compose up để chạy tất cả các dịch vụ bên dưới ứng dụng.
+1) Định nghĩa môi trường ứng dụng với Dockerfile cho tất cả các dịch vụ
+
+2) Tạo file docker-compose-yml định nghĩa tất cả các dịch vụ bên dưới ứng dụng
+
+3) Chạy lệnh docker-compose up để chạy tất cả các dịch vụ bên dưới ứng dụng.
+
 
 Cài đặt Docker compose
 
