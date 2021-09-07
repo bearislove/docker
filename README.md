@@ -618,7 +618,8 @@ Bạn có thể truy cập ứng dụng web. Ví dụ, http://localhost trong đ
 **Bước 6: Cập nhật nội dung docker**
 Sử dụng lệnh sau để rebuild container webapp và khởi chạy bằng cách sử dụng docker-compose
 
-``
+```
 $ docker-compose build
+
 $ docker-compose up -d
-``
+```
